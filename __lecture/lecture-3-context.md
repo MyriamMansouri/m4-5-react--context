@@ -196,18 +196,23 @@ const Navigation = ({ user, setUser }) => {
 ---
 
 ```jsx
+export const DialogContext = React.createContext(null);
+
+
 const App = () => {
   const [dialog, setDialog] = React.useState(null);
 
   return (
-    <>
-      <MainContent dialog={dialog} setDialog={setDialog} />
-      <Dialog currentDialog={dialog} />
-    </>
+    <DialogContext.Provider value={{ dialog, setDialog }}>
+      <MainContent  />
+      <Dialog />
+    </DialogContext.Provider>
   );
 };
 
-const MainContent = ({ dialog, setDialog }) => {
+const MainContent = () => {
+  const { setDialog } = React.useContext(DialogContext);
+
   return (
     <>
       <Sidebar>
@@ -220,8 +225,9 @@ const MainContent = ({ dialog, setDialog }) => {
   );
 };
 
-const Dialog = ({ currentDialog }) => {
-  if (!currentDialog) {
+const Dialog = () => {
+    const { dialog } = React.useContext(DialogContext);
+  if (!dialog) {
     return null;
   }
 

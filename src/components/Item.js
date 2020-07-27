@@ -1,63 +1,46 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 
-const Item = ({
-  index,
-  name,
-  cost,
-  value,
-  numOwned,
-  handleAttemptedPurchase,
-}) => {
-  const ref = React.useRef(null);
-
-  React.useEffect(() => {
-    if (index === 0) {
-      ref.current.focus();
-    }
-  }, [index]);
-
-  return (
-    <Wrapper ref={ref} onClick={handleAttemptedPurchase}>
-      <Left>
-        <Name>{name}</Name>
-        <Info>
-          Cost: {cost} cookie(s). Produces {value} cookies/second.
-        </Info>
-      </Left>
-      <Right>{numOwned}</Right>
-    </Wrapper>
-  );
-};
-
-const Wrapper = styled.button`
-  width: 100%;
+const ItemWrapper = styled.button`
+  background-color: inherit;
+  color: inherit;
+  text-align: inherit;
+  font-size: inherit;
+  border: none;
+  border-bottom: grey 1px solid;
+  padding: 10px 0;
   display: flex;
   align-items: center;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid #444;
-  color: #fff;
-  text-align: left;
-  padding: 15px 0;
+  justify-content: space-between;
+  .num-owned {
+    font-size: 1.95rem;
+    padding: 0 15px;
+  }
+  &:focus {
+    outline: blue solid 3px;
+  }
 `;
 
-const Left = styled.div`
-  flex: 1;
-`;
+const Item = ({ name, cost, value, click, numOwned, isFirst, handleClick }) => {
+  const itemRef = React.useRef(null);
+  useEffect(() => {
+    if (isFirst) {
+      itemRef.current.focus();
+    }
+  }, [isFirst]);
 
-const Name = styled.h4`
-  font-size: 22px;
-`;
-
-const Info = styled.div`
-  color: #ccc;
-  font-size: 15px;
-`;
-
-const Right = styled.div`
-  font-size: 32px;
-  padding: 0 20px;
-`;
+  return (
+    <ItemWrapper onClick={handleClick} ref={itemRef}>
+      <div>
+        <h4>{name}</h4>
+        <p>
+          Cost: {cost} cookies. Produces {value} cookies/second.
+        </p>
+        <p>Increases cookies/click to {click}.</p>
+      </div>
+      <div className="num-owned">{numOwned}</div>
+    </ItemWrapper>
+  );
+};
 
 export default Item;
