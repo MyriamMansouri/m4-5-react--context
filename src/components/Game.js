@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 
 import cookieSrc from "../cookie.svg";
-import { AppContext } from "./App";
+import { GameContext } from "./GameContext";
 import Item from "./Item";
 import useInterval from "../hooks/use-interval.hook";
 import useKeydown from "../hooks/useKeydown.hook";
@@ -12,49 +12,33 @@ import useDocumentTitle from "../hooks/useDocumentTitle.hook";
 const Game = () => {
   const {
     numCookies,
-    setNumCookies,
     items,
     setItems,
     purchasedItems,
     setPurchasedItems,
-  } = React.useContext(AppContext);
+    cookiesPerSecond,
+    cookiesPerClick,
+    incrementCookies
+  } = React.useContext(GameContext);         
 
-  const calculateCookiesPerClick = () => {
-    return (
-      items.items
-        .map((item) => item.click * purchasedItems[item.id])
-        .reduce((val, acc) => val + acc) + 1
-    );
-  };
 
-  const calculateCookiesPerTick = () => {
-console.log(items.items)
-    return items.items
-      .map((item) => item.value * purchasedItems[item.id])
-      .reduce((val, acc) => val + acc);
-  };
 
-  const incrementCookies = (increment) => {
-    setNumCookies((n) => n + increment);
-  };
+  useInterval(() => incrementCookies(cookiesPerSecond), 1000);
 
-  useInterval(() => {
-    const numOfGeneratedCookies = calculateCookiesPerTick();
-    setNumCookies(numOfGeneratedCookies + numCookies);
-  }, 1000);
-
-  useKeydown("Space", () => incrementCookies(calculateCookiesPerClick()));
+  useKeydown("Space", () => incrementCookies(cookiesPerSecond));
   useDocumentTitle(`${numCookies} cookies - Cookie clicker`, "Coockie clicker");
 
   const handleClick = (id, cost) => {
     if (numCookies - cost >= 0) {
       setPurchasedItems({ ...purchasedItems, [id]: purchasedItems[id] + 1 });
-      setItems( { items:
-        items.items.map((item, index) =>
-          item.id === id ? { ...item, cost: item.cost * (index + 1) * 2 } : item
-        )}
-      );
-      setNumCookies((n) => n - cost);
+      setItems({
+        items: items.items.map((item, index) =>
+          item.id === id
+            ? { ...item, cost: item.cost * (purchasedItems[id] + 1) }
+            : item
+        ),
+      });
+      incrementCookies(-cost);
     } else {
       window.alert(
         `You just can't. Item is ${cost} but you only have ${numCookies}.`
@@ -66,13 +50,13 @@ console.log(items.items)
     <Wrapper>
       <GameArea>
         <Indicator>
-          <Total>{Number(numCookies)} cookies</Total>
-          <strong>{calculateCookiesPerTick()}</strong> cookies per second
+          <Total>{numCookies} cookies</Total>
+          <strong>{cookiesPerSecond}</strong> cookies per second
         </Indicator>
         <Button>
           <Cookie
             src={cookieSrc}
-            onClick={() => incrementCookies(calculateCookiesPerClick())}
+            onClick={() => incrementCookies(cookiesPerClick)}
           />
         </Button>
       </GameArea>
