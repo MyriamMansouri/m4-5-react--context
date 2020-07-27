@@ -55,7 +55,6 @@ export const GameProvider = ({ children }) => {
     <GameContext.Provider
       value={{
         numCookies,
-        setNumCookies,
         items,
         setItems,
         purchasedItems,

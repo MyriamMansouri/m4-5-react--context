@@ -24,13 +24,14 @@ const Game = () => {
   useInterval(() => incrementCookies(cookiesPerSecond), 1000);
 
   useKeydown("Space", () => incrementCookies(cookiesPerSecond));
+
   useDocumentTitle(`${numCookies} cookies - Cookie clicker`, "Coockie clicker");
 
   const handleClick = (id, cost) => {
     if (numCookies - cost >= 0) {
       setPurchasedItems({ ...purchasedItems, [id]: purchasedItems[id] + 1 });
       setItems({
-        items: items.items.map((item, index) =>
+        items: items.items.map((item) =>
           item.id === id
             ? { ...item, cost: item.cost * (purchasedItems[id] + 1) }
             : item
