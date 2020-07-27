@@ -1,5 +1,6 @@
 import React from "react";
 import usePersistedState from "../hooks/userPersistedState.hook";
+
 import { data } from "../data/data";
 
 export const GameContext = React.createContext(null);
@@ -49,7 +50,7 @@ export const GameProvider = ({ children }) => {
   const incrementCookies = (increment) => {
     setNumCookies((n) => n + increment);
   };
-  
+
   return (
     <GameContext.Provider
       value={{

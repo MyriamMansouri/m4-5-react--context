@@ -21,8 +21,6 @@ const Game = () => {
     incrementCookies
   } = React.useContext(GameContext);         
 
-
-
   useInterval(() => incrementCookies(cookiesPerSecond), 1000);
 
   useKeydown("Space", () => incrementCookies(cookiesPerSecond));
