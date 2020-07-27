@@ -11,36 +11,32 @@ import useDocumentTitle from "../hooks/useDocumentTitle.hook";
 
 const Game = () => {
   const {
-    numCookies,
     items,
-    setItems,
+    numCookies,
     purchasedItems,
     setPurchasedItems,
     cookiesPerSecond,
     cookiesPerClick,
-    incrementCookies
-  } = React.useContext(GameContext);         
+    incrementCookies,
+  } = React.useContext(GameContext);
 
   useInterval(() => incrementCookies(cookiesPerSecond), 1000);
+  useKeydown("Space", () => incrementCookies(cookiesPerClick   ));
 
-  useKeydown("Space", () => incrementCookies(cookiesPerSecond));
+  const updatedCost = (id, cost) => {
+    return cost * (purchasedItems[id] + 1);
+  };
 
   useDocumentTitle(`${numCookies} cookies - Cookie clicker`, "Coockie clicker");
 
   const handleClick = (id, cost) => {
-    if (numCookies - cost >= 0) {
+    const newCost = updatedCost(id, cost)
+    if (numCookies - newCost >= 0) {
       setPurchasedItems({ ...purchasedItems, [id]: purchasedItems[id] + 1 });
-      setItems({
-        items: items.items.map((item) =>
-          item.id === id
-            ? { ...item, cost: item.cost * (purchasedItems[id] + 1) }
-            : item
-        ),
-      });
-      incrementCookies(-cost);
+      incrementCookies(-newCost);
     } else {
       window.alert(
-        `You just can't. Item is ${cost} but you only have ${numCookies}.`
+        `You just can't. Item is ${newCost} but you only have ${numCookies}.`
       );
     }
   };
@@ -63,11 +59,11 @@ const Game = () => {
       <ItemArea>
         <SectionTitle>Items:</SectionTitle>
 
-        {items.items.map((item, index) => (
+        {items.map((item, index) => (
           <Item
             key={item.id}
             name={item.name}
-            cost={item.cost}
+            cost={updatedCost(item.id, item.cost)}
             value={item.value}
             click={item.click}
             numOwned={purchasedItems[item.id]}
